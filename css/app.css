@@ -476,6 +476,18 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   .sheet-grip { display: none; }
   .sheet-grab { margin: 0; padding: 0; touch-action: auto; }
   .sheet-done { display: none; }
+  /* The event sheet scrolls inside its form, not on the dialog itself: a scrollbar on the
+     dialog squares off its rounded right corners. The dialog clips it to the curve. */
+  #sheet { padding: 0; overflow: hidden; }
+  #sheet[open] { display: flex; flex-direction: column; }
+  #sheet .sheet-form {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-6);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-soft) transparent;
+  }
 }
 
 .menu { display: none; }
