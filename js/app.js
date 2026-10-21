@@ -141,42 +141,63 @@ introForm.addEventListener('submit', async e => {
   await arrive(birthDate);
 });
 
-// The birthday leaves its boxes, travels to where the line begins and becomes its first
-// point; then the view pulls back while the line draws itself to today.
-const FLY_MS = 1400;
+// One motion: the year leaves its box and becomes the year under "Geburt" on the line,
+// while the view pulls back from close around that spot and the line draws itself to
+// today. The day and month fade away with the rest of the screen.
 async function arrive(birthDate) {
-  const from = $('.birth-date .typed-date').getBoundingClientRect();
+  const yearBox = $('.birth-date .typed-date input:last-of-type');
+  const box = yearBox.getBoundingClientRect();
+  const boxFont = parseFloat(getComputedStyle(yearBox).fontSize);
+
   const fly = document.createElement('div');
   fly.className = 'birth-fly';
   fly.setAttribute('aria-hidden', 'true');
-  const [y, m, d] = birthDate.split('-');
-  fly.textContent = `${d}.${m}.${y}`;
-  fly.style.left = `${from.left + from.width / 2}px`;
-  fly.style.top = `${from.top + from.height / 2}px`;
+  fly.textContent = birthDate.slice(0, 4);
   document.body.append(fly);
+  const natural = fly.getBoundingClientRect(); // styled exactly like the label, unscaled
+  const s0 = boxFont / parseFloat(getComputedStyle(fly).fontSize);
+  const x0 = box.left + box.width / 2, y0 = box.top + box.height / 2;
+  const place = (x, y, s) => { fly.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${s})`; };
+  place(x0, y0, s0);
+  yearBox.style.color = 'transparent';
 
-  intro.classList.add('is-leaving');
-  await new Promise(r => setTimeout(r, 420));
-  intro.hidden = true;
-  intro.classList.remove('is-leaving');
+  // The line appears underneath while the birthday screen fades off it.
   app.hidden = false;
   refresh();
+  intro.classList.add('is-leaving');
+  setTimeout(() => {
+    intro.hidden = true;
+    intro.classList.remove('is-leaving');
+    yearBox.style.color = '';
+  }, 420);
 
-  let landed;
-  const drawn = timeline.animateIn(false, { zoomFrom: 4, after: new Promise(r => { landed = r; }) });
-  const to = timeline.birthPoint();
-  const dx = to.x - (from.left + from.width / 2);
-  const dy = to.y - (from.top + from.height / 2);
-  const ease = 'cubic-bezier(0.45, 0.05, 0.35, 1)';
-  fly.animate(
-    [{ transform: 'translate(-50%, -50%)' }, { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.2)` }],
-    { duration: FLY_MS, easing: ease, fill: 'forwards' },
-  );
-  // The line starts just before the date arrives, so the date dissolves into its first point.
-  setTimeout(landed, FLY_MS - 250);
-  await fly.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 320, delay: FLY_MS - 220, fill: 'forwards' }).finished;
-  fly.remove();
-  await drawn;
+  const label = timeline.birthYearLabel();
+  label.classList.add('is-carried');
+  const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  await new Promise(done => {
+    timeline.animateIn(false, {
+      zoomFrom: 4,
+      pivot: label, // the year's place holds still while the life opens out around it
+      onStart(duration) {
+        fly.classList.add('is-landing'); // colour eases to the label's
+        const t0 = performance.now();
+        const follow = now => {
+          const p = Math.min(1, (now - t0) / duration);
+          const e = ease(p);
+          // The label shrinks with the zoom around it; the year glides in and matches it.
+          const r = label.getBoundingClientRect();
+          place(lerp(x0, r.left + r.width / 2, e), lerp(y0, r.top + r.height / 2, e), lerp(s0, r.height / natural.height, e));
+          if (p < 1) return requestAnimationFrame(follow);
+          label.classList.remove('is-carried');
+          fly.remove();
+          done();
+        };
+        requestAnimationFrame(follow);
+      },
+    });
+  });
 }
 
 // --- Menu ----------------------------------------------------------------------------

@@ -281,18 +281,24 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   .add-label { display: none; }
 }
 
-/* The birthday on its way from the boxes to the start of the line. */
+/* The birth year on its way from its box to its place under "Geburt". Styled exactly like
+   that label (.tick-year), so when it lands the two are the same text. */
 .birth-fly {
   position: fixed;
+  left: 0;
+  top: 0;
   z-index: 10;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-display);
-  font-size: 28px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.1;
   letter-spacing: var(--tracking-wide);
   color: var(--text-primary);
   white-space: nowrap;
   pointer-events: none;
+  will-change: transform;
 }
+.birth-fly.is-landing { color: var(--text-faint); transition: color var(--dur-draw) var(--ease-in-out); }
+.tick-year.is-carried { visibility: hidden; }
 .track.is-arriving { overflow: hidden; }
 
 /* --- The line ---------------------------------------------------------------------- */
