@@ -3,6 +3,8 @@
 import * as store from './storage.js';
 import { createTimeline } from './timeline.js';
 import { createSheet } from './sheet.js';
+import { swipeToClose } from './swipe.js';
+import { typedDate } from './typed-date.js';
 import { todayIso } from './dates.js';
 
 const $ = sel => document.querySelector(sel);
@@ -99,24 +101,35 @@ $('.add').addEventListener('click', () => {
 
 // --- Birthday ----------------------------------------------------------------------
 
+const birth = typedDate($('.birth-date'), 'Geburtsdatum');
+const introError = $('.intro-error');
+
 function showIntro(editing) {
   app.hidden = true;
   intro.hidden = false;
   intro.classList.toggle('is-editing', editing);
-  const input = introForm.elements.birth;
-  input.max = todayIso();
-  input.value = editing ? settings.birthDate : '';
+  birth.set(editing ? settings.birthDate : '');
+  introError.hidden = true;
   introForm.querySelector('.intro-submit').textContent = editing ? 'Speichern' : 'Zeitstrahl zeichnen';
-  if (editing) $('.intro-cancel').hidden = false;
-  input.focus();
+  $('.intro-cancel').hidden = !editing;
+  if (matchMedia('(pointer: fine)').matches) birth.focus();
 }
 
 $('.intro-cancel').addEventListener('click', () => { intro.hidden = true; app.hidden = false; });
 
 introForm.addEventListener('submit', async e => {
   e.preventDefault();
-  const birthDate = introForm.elements.birth.value;
-  if (!birthDate || birthDate > todayIso()) return;
+  const birthDate = birth.get();
+  const problem = !birthDate
+    ? (birth.isComplete()
+      ? 'Dieses Datum gibt es nicht. Prüf Tag und Monat noch einmal.'
+      : 'Tippe dein Geburtsdatum als Tag, Monat und Jahr ein, zum Beispiel 14.05.1991.')
+    : birthDate > todayIso() ? 'Dein Geburtsdatum liegt in der Zukunft. Prüf das Jahr noch einmal.'
+    : birthDate < '1900-01-01' ? 'Der Zeitstrahl beginnt frühestens 1900. Prüf das Jahr noch einmal.'
+    : '';
+  introError.textContent = problem;
+  introError.hidden = !problem;
+  if (problem) return;
   settings = { ...settings, birthDate };
   await store.setSettings(settings);
   if (!reduced.matches) {
@@ -133,6 +146,8 @@ introForm.addEventListener('submit', async e => {
 // --- Menu ----------------------------------------------------------------------------
 
 const menu = $('#menu');
+swipeToClose($('#sheet'));
+swipeToClose(menu);
 $('.menu-open').addEventListener('click', () => menu.showModal());
 menu.addEventListener('click', e => { if (e.target === menu) menu.close(); });
 const fileInput = $('#import-file');

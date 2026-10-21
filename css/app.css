@@ -117,6 +117,11 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .date-inputs select { flex: 1; }
 .date-inputs .input-year { flex: 0 0 7.5rem; }
 .date-inputs .input-year:only-child { flex: 1; }
+/* TT . MM . JJJJ */
+.typed-date { display: grid; grid-template-columns: 4rem auto 4rem auto 5.5rem; align-items: center; gap: var(--space-2); justify-content: start; }
+.typed-date .input { text-align: center; padding-left: var(--space-2); padding-right: var(--space-2); }
+.typed-sep { color: var(--text-faint); }
+.intro-error { margin-top: var(--space-2); }
 .field-hint { margin: var(--space-2) 0 0; font-size: 13px; color: var(--text-muted); }
 
 .check { display: flex; align-items: center; gap: var(--space-3); font-size: 15px; cursor: pointer; }
@@ -411,6 +416,9 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 }
 .sheet[open] { animation: rise var(--dur-slow) var(--ease-out); }
 .sheet-grip { width: 36px; height: 4px; margin: 0 auto var(--space-4); border-radius: 2px; background: var(--border-soft); }
+/* The handle and the title are where a sheet can be pulled down; the bigger the target the better. */
+.sheet-grab { margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-5)) 0; padding: var(--space-3) var(--space-5) 0; touch-action: none; }
+.sheet-title:focus { outline: none; }
 .sheet-form { display: grid; gap: var(--space-5); }
 .sheet-title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: var(--leading-snug); }
 .sheet-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
@@ -431,6 +439,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   }
   .sheet[open] { animation-name: settle; }
   .sheet-grip { display: none; }
+  .sheet-grab { margin: 0; padding: 0; touch-action: auto; }
 }
 
 .menu { display: none; }

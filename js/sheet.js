@@ -2,6 +2,7 @@
 // precisely someone remembers: a day, a week, a month or only the year.
 
 import { MONTHS, parts, iso, normalise, toDay, todayIso, formatDate } from './dates.js';
+import { typedDate } from './typed-date.js';
 
 const PRECISIONS = [['day', 'Tag'], ['week', 'Woche'], ['month', 'Monat'], ['year', 'Jahr']];
 let uid = 0;
@@ -22,6 +23,8 @@ function dateField(host, legend) {
   let value = todayIso();
   let precision = 'year';
   let min = '1900-01-01';
+  let typed = null;   // the TT.MM.JJJJ boxes, while day or week is chosen
+  let invalid = false;
 
   function draw() {
     host.querySelector(`input[value="${precision}"]`).checked = true;
@@ -29,8 +32,10 @@ function dateField(host, legend) {
     const max = todayIso();
     const [minY] = parts(min), [maxY] = parts(max);
     hint.hidden = precision !== 'week';
+    typed = null;
     if (precision === 'day' || precision === 'week') {
-      inputs.innerHTML = `<input type="date" class="input" aria-label="Datum" min="${min}" max="${max}" value="${value}">`;
+      typed = typedDate(inputs, 'Datum');
+      typed.set(value);
     } else if (precision === 'month') {
       inputs.innerHTML = `
         <select class="input" aria-label="Monat">${MONTHS.map((n, i) => `<option value="${i + 1}"${i + 1 === m ? ' selected' : ''}>${n}</option>`).join('')}</select>
@@ -41,8 +46,12 @@ function dateField(host, legend) {
   }
 
   function read() {
-    const date = inputs.querySelector('input[type="date"]');
-    if (date) { if (date.value) value = date.value; return; }
+    invalid = false;
+    if (typed) {
+      const v = typed.get();
+      if (v) value = v; else invalid = true;
+      return;
+    }
     const year = Number(inputs.querySelector('.input-year').value);
     const month = Number(inputs.querySelector('select')?.value ?? 1);
     if (year >= 1000 && year <= 9999) value = iso(year, month, 1);
@@ -54,7 +63,8 @@ function dateField(host, legend) {
 
   return {
     set(v, p, minIso) { value = v; precision = p; min = minIso; draw(); },
-    get() { read(); return { date: normalise(value, precision), precision }; },
+    // date is null while the typed day is incomplete or does not exist.
+    get() { read(); return { date: invalid ? null : normalise(value, precision), precision }; },
     focus() { inputs.querySelector('input, select')?.focus(); },
   };
 }
@@ -102,6 +112,7 @@ export function createSheet(dialog, { onSave, onDelete, confirm }) {
 
   function validate(ev) {
     if (!ev.title) return 'Gib dem Moment ein paar Worte.';
+    if (!ev.start.date || (ev.end && !ev.end.ongoing && !ev.end.date)) return 'Dieses Datum gibt es so nicht. Tippe es als Tag, Monat und Jahr ein, zum Beispiel 14.05.1991.';
     const last = toDay(todayIso());
     const s = toDay(ev.start.date);
     if (s > last) return 'Der Zeitstrahl reicht bis heute. Wähle ein früheres Datum.';
@@ -164,7 +175,9 @@ export function createSheet(dialog, { onSave, onDelete, confirm }) {
       endTouched = !!ev.end;
       syncEnd();
       dialog.showModal();
-      if (isNew) title.focus();
+      // On a phone, opening the keyboard right away hides half the sheet. Only a
+      // mouse-and-keyboard setup gets the cursor straight into the title.
+      if (isNew && matchMedia('(pointer: fine)').matches) title.focus();
     },
   };
 }

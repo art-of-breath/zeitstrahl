@@ -1,7 +1,7 @@
 // Offline shell. Network first, so a new version shows up on the next visit; the cache
 // only answers when there is no connection. Bump VERSION when the file list changes.
 
-const VERSION = 'zeitstrahl-v5';
+const VERSION = 'zeitstrahl-v6';
 const SHELL = [
   './',
   'index.html',
@@ -14,6 +14,8 @@ const SHELL = [
   'js/scale.js',
   'js/sheet.js',
   'js/storage.js',
+  'js/swipe.js',
+  'js/typed-date.js',
   'js/timeline.js',
   'img/gold-small.png',
   'img/kintsugi-06.svg',

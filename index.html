@@ -28,10 +28,11 @@
       <h1 class="intro-title">Dein Zeitstrahl</h1>
       <p class="intro-lede">Hier legst du die Momente deines Lebens auf eine Linie, die schönen und die schweren. Sie beginnt mit deiner Geburt.</p>
       <form id="intro-form" class="intro-form">
-        <label class="field">
-          <span class="field-label">Wann bist du geboren?</span>
-          <input class="input" type="date" name="birth" required min="1900-01-01">
-        </label>
+        <div class="field">
+          <span class="field-label" id="birth-label">Wann bist du geboren?</span>
+          <div class="birth-date"></div>
+          <p class="form-error intro-error" role="alert" hidden></p>
+        </div>
         <div class="intro-actions">
           <button class="btn btn-ghost intro-cancel" type="button" hidden>Abbrechen</button>
           <button class="btn btn-primary intro-submit" type="submit">Zeitstrahl zeichnen</button>
@@ -83,8 +84,10 @@
 
   <dialog id="sheet" class="sheet" aria-labelledby="sheet-title">
     <form class="sheet-form" novalidate>
-      <div class="sheet-grip" aria-hidden="true"></div>
-      <h2 class="sheet-title" id="sheet-title">Etwas eintragen</h2>
+      <div class="sheet-grab">
+        <div class="sheet-grip" aria-hidden="true"></div>
+        <h2 class="sheet-title" id="sheet-title" tabindex="-1" autofocus>Etwas eintragen</h2>
+      </div>
 
       <label class="field">
         <span class="field-label">Was ist passiert?</span>
@@ -132,8 +135,10 @@
   </dialog>
 
   <dialog id="menu" class="sheet menu">
-    <div class="sheet-grip" aria-hidden="true"></div>
-    <h2 class="sheet-title">Menü</h2>
+    <div class="sheet-grab">
+      <div class="sheet-grip" aria-hidden="true"></div>
+      <h2 class="sheet-title" tabindex="-1" autofocus>Menü</h2>
+    </div>
     <p class="menu-privacy">Deine Einträge bleiben nur auf diesem Gerät. Willst du sie auf ein anderes Gerät mitnehmen, sichere sie als Datei und lade sie dort wieder.</p>
     <ul class="menu-list">
       <li><button type="button" data-action="export">Als Datei sichern</button></li>
