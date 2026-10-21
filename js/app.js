@@ -132,16 +132,52 @@ introForm.addEventListener('submit', async e => {
   if (problem) return;
   settings = { ...settings, birthDate };
   await store.setSettings(settings);
-  if (!reduced.matches) {
-    intro.classList.add('is-leaving');
-    await new Promise(r => setTimeout(r, 420));
+  if (reduced.matches) {
+    intro.hidden = true;
+    app.hidden = false;
+    refresh();
+    return;
   }
+  await arrive(birthDate);
+});
+
+// The birthday leaves its boxes, travels to where the line begins and becomes its first
+// point; then the view pulls back while the line draws itself to today.
+const FLY_MS = 1400;
+async function arrive(birthDate) {
+  const from = $('.birth-date .typed-date').getBoundingClientRect();
+  const fly = document.createElement('div');
+  fly.className = 'birth-fly';
+  fly.setAttribute('aria-hidden', 'true');
+  const [y, m, d] = birthDate.split('-');
+  fly.textContent = `${d}.${m}.${y}`;
+  fly.style.left = `${from.left + from.width / 2}px`;
+  fly.style.top = `${from.top + from.height / 2}px`;
+  document.body.append(fly);
+
+  intro.classList.add('is-leaving');
+  await new Promise(r => setTimeout(r, 420));
   intro.hidden = true;
   intro.classList.remove('is-leaving');
   app.hidden = false;
   refresh();
-  await timeline.animateIn(reduced.matches);
-});
+
+  let landed;
+  const drawn = timeline.animateIn(false, { zoomFrom: 4, after: new Promise(r => { landed = r; }) });
+  const to = timeline.birthPoint();
+  const dx = to.x - (from.left + from.width / 2);
+  const dy = to.y - (from.top + from.height / 2);
+  const ease = 'cubic-bezier(0.45, 0.05, 0.35, 1)';
+  fly.animate(
+    [{ transform: 'translate(-50%, -50%)' }, { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.2)` }],
+    { duration: FLY_MS, easing: ease, fill: 'forwards' },
+  );
+  // The line starts just before the date arrives, so the date dissolves into its first point.
+  setTimeout(landed, FLY_MS - 250);
+  await fly.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 320, delay: FLY_MS - 220, fill: 'forwards' }).finished;
+  fly.remove();
+  await drawn;
+}
 
 // --- Menu ----------------------------------------------------------------------------
 

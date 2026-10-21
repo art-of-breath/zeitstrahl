@@ -274,7 +274,26 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 @media (max-width: 767px) {
   .zoom { display: none; }
   .controls { justify-content: flex-end; }
+  /* On a phone the add button is a quiet round plus. Round on purpose (Kenny, 2026-10-21):
+     the 18px button radius reads oddly on a button that is only an icon. */
+  .add { width: 56px; height: 56px; padding: 0; border-radius: 50%; }
+  .add svg { width: 24px; height: 24px; stroke-width: 1.8; }
+  .add-label { display: none; }
 }
+
+/* The birthday on its way from the boxes to the start of the line. */
+.birth-fly {
+  position: fixed;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-primary);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.track.is-arriving { overflow: hidden; }
 
 /* --- The line ---------------------------------------------------------------------- */
 
@@ -433,7 +452,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .sheet-grab { margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-5)) 0; padding: var(--space-3) var(--space-5) 0; touch-action: none; }
 .sheet-title:focus { outline: none; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.sheet-done { flex: none; width: 40px; min-height: 40px; color: var(--text-inverse); background: var(--brand); }
+.sheet-done { flex: none; width: 40px; min-height: 40px; border-radius: 50%; color: var(--text-inverse); background: var(--brand); }
 .sheet-done:hover:not(:disabled) { background: var(--brand-hover); }
 .sheet-done svg { width: 20px; height: 20px; stroke-width: 2; }
 .sheet-form { display: grid; gap: var(--space-5); }

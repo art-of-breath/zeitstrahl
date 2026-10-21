@@ -570,24 +570,45 @@ export function createTimeline(root, { onPick, onOpen, onChange, verticalQuery }
     rerender: softRender,
     zoomBy: f => zoomTo(ppd * f),
     canZoom: () => ({ in: ppd < MAX_PPD - 1e-9, out: ppd > minPpd + 1e-9 }),
-    animateIn(reduced) {
+    // Draws the line from birth to today. Options for the first arrival:
+    // zoomFrom starts the view magnified around the birth point and pulls back while the
+    // line draws; after is a promise to wait for (the birthday flying in) before drawing.
+    animateIn(reduced, { zoomFrom = 1, after = null } = {}) {
       if (reduced) return Promise.resolve();
       drawing = true;
       canvas.classList.add('pre');
+      if (zoomFrom !== 1) {
+        root.classList.add('is-arriving');
+        canvas.style.transformOrigin = vertical ? `${g.spine}px ${g.padStart}px` : `${g.padStart}px ${g.spine}px`;
+        canvas.style.transform = `scale(${zoomFrom})`;
+      }
       void canvas.offsetWidth;
       return new Promise(resolve => {
-        // Two frames: the first paints the empty state, the second starts the drawing.
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          canvas.classList.add('drawing');
-          canvas.classList.remove('pre');
-          setTimeout(() => {
-            canvas.classList.remove('drawing');
-            drawing = false;
-            if (renderHeld) { renderHeld = false; render(); }
-            resolve();
-          }, DRAW_MS + 900);
-        }));
+        Promise.resolve(after).then(() => {
+          // Two frames: the first paints the empty state, the second starts the drawing.
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            canvas.classList.add('drawing');
+            canvas.classList.remove('pre');
+            if (zoomFrom !== 1) {
+              canvas.style.transition = `transform ${DRAW_MS}ms var(--ease-in-out)`;
+              canvas.style.transform = '';
+            }
+            setTimeout(() => {
+              canvas.classList.remove('drawing');
+              canvas.style.transition = canvas.style.transformOrigin = '';
+              root.classList.remove('is-arriving');
+              drawing = false;
+              if (renderHeld) { renderHeld = false; render(); }
+              resolve();
+            }, DRAW_MS + 900);
+          }));
+        });
       });
+    },
+    // Where the line begins, on screen. The zoom pivots on it, so it holds still.
+    birthPoint() {
+      const r = canvas.querySelector('.birth-dot').getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
     },
     focusEvent(id) { canvas.querySelector(`.ev[data-id="${CSS.escape(id)}"]`)?.focus(); },
   };
