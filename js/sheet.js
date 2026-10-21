@@ -84,6 +84,13 @@ export function createSheet(dialog, { onSave, onDelete, confirm }) {
   const end = dateField(dialog.querySelector('.end-field'), 'Bis wann?');
 
   let current = null;
+
+  const markTitle = bad => {
+    title.classList.toggle('is-invalid', bad);
+    if (bad) title.setAttribute('aria-invalid', 'true'); else title.removeAttribute('aria-invalid');
+  };
+  // The red goes as soon as something is typed.
+  title.addEventListener('input', () => { if (title.value.trim()) markTitle(false); });
   let birthIso = '1900-01-01';
 
   const syncEnd = () => {
@@ -138,7 +145,12 @@ export function createSheet(dialog, { onSave, onDelete, confirm }) {
     const problem = validate(ev);
     error.textContent = problem;
     error.hidden = !problem;
-    if (problem) return;
+    markTitle(!ev.title);
+    if (problem) {
+      // A missing title is the usual case: show the field itself, not only the message.
+      if (!ev.title) { title.scrollIntoView({ block: 'center', behavior: 'smooth' }); title.focus({ preventScroll: true }); }
+      return;
+    }
     await onSave(ev);
     dialog.close();
   });
@@ -161,6 +173,7 @@ export function createSheet(dialog, { onSave, onDelete, confirm }) {
       heading.textContent = isNew ? 'Etwas eintragen' : 'Eintrag ändern';
       del.hidden = isNew;
       error.hidden = true;
+      markTitle(false);
       title.value = ev.title ?? '';
       note.value = ev.note ?? '';
       form.querySelectorAll('input[name="tone"]').forEach(r => {

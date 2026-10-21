@@ -84,6 +84,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
 .input:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 0 3px var(--status-warning-soft); }
+.input.is-invalid { border-color: var(--status-danger); background: color-mix(in srgb, var(--status-danger-soft) 45%, var(--surface-raised)); }
+.input.is-invalid:focus { border-color: var(--status-danger); box-shadow: 0 0 0 3px var(--status-danger-soft); }
 textarea.input { resize: vertical; min-height: 88px; }
 select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%), linear-gradient(135deg, var(--text-muted) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: var(--space-7); }
 
