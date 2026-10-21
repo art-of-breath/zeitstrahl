@@ -570,47 +570,44 @@ export function createTimeline(root, { onPick, onOpen, onChange, verticalQuery }
     rerender: softRender,
     zoomBy: f => zoomTo(ppd * f),
     canZoom: () => ({ in: ppd < MAX_PPD - 1e-9, out: ppd > minPpd + 1e-9 }),
-    // Draws the line from birth to today. Options for the first arrival:
-    // zoomFrom starts the view magnified (around the birth point, or around pivot) and pulls back while the
-    // line draws; after is a promise to wait for before drawing; onStart(duration) fires
-    // the moment the drawing begins.
-    animateIn(reduced, { zoomFrom = 1, pivot = null, after = null, onStart = null } = {}) {
+    // Draws the line from birth to today. For the first arrival, from = { el, x, y, scale }
+    // starts the whole view moved and magnified so that el (the birth year) sits at x, y on
+    // screen at that scale; the view then settles into place while the line draws, so the
+    // line grows out of the year and the year slots into its spot.
+    animateIn(reduced, { from = null } = {}) {
       if (reduced) return Promise.resolve();
       drawing = true;
       canvas.classList.add('pre');
-      if (zoomFrom !== 1) {
+      let anchor = null;
+      if (from) {
         root.classList.add('is-arriving');
-        // The zoom pivots on the birth point, or on a given element so that it holds still.
-        if (pivot) {
-          const c = canvas.getBoundingClientRect(), r = pivot.getBoundingClientRect();
-          canvas.style.transformOrigin = `${r.left + r.width / 2 - c.left}px ${r.top + r.height / 2 - c.top}px`;
-        } else {
-          canvas.style.transformOrigin = vertical ? `${g.spine}px ${g.padStart}px` : `${g.padStart}px ${g.spine}px`;
-        }
-        canvas.style.transform = `scale(${zoomFrom})`;
+        anchor = from.el.closest('.tick');
+        anchor.classList.add('is-anchor');
+        const c = canvas.getBoundingClientRect(), r = from.el.getBoundingClientRect();
+        const lx = r.left + r.width / 2 - c.left, ly = r.top + r.height / 2 - c.top;
+        canvas.style.transformOrigin = '0 0';
+        canvas.style.transform = `translate(${from.x - c.left - lx * from.scale}px, ${from.y - c.top - ly * from.scale}px) scale(${from.scale})`;
       }
       void canvas.offsetWidth;
       return new Promise(resolve => {
-        Promise.resolve(after).then(() => {
-          // Two frames: the first paints the empty state, the second starts the drawing.
-          requestAnimationFrame(() => requestAnimationFrame(() => {
-            canvas.classList.add('drawing');
-            canvas.classList.remove('pre');
-            if (zoomFrom !== 1) {
-              canvas.style.transition = `transform ${DRAW_MS}ms var(--ease-in-out)`;
-              canvas.style.transform = '';
-            }
-            onStart?.(DRAW_MS);
-            setTimeout(() => {
-              canvas.classList.remove('drawing');
-              canvas.style.transition = canvas.style.transformOrigin = '';
-              root.classList.remove('is-arriving');
-              drawing = false;
-              if (renderHeld) { renderHeld = false; render(); }
-              resolve();
-            }, DRAW_MS + 900);
-          }));
-        });
+        // Two frames: the first paints the start state, the second starts the drawing.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          canvas.classList.add('drawing');
+          canvas.classList.remove('pre');
+          if (from) {
+            canvas.style.transition = `transform ${DRAW_MS}ms var(--ease-in-out)`;
+            canvas.style.transform = '';
+          }
+          setTimeout(() => {
+            canvas.classList.remove('drawing');
+            canvas.style.transition = canvas.style.transformOrigin = '';
+            root.classList.remove('is-arriving');
+            anchor?.classList.remove('is-anchor');
+            drawing = false;
+            if (renderHeld) { renderHeld = false; render(); }
+            resolve();
+          }, DRAW_MS + 900);
+        }));
       });
     },
     // The year under "Geburt", for the birthday to land on.

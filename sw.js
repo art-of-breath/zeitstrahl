@@ -1,7 +1,7 @@
 // Offline shell. Network first, so a new version shows up on the next visit; the cache
 // only answers when there is no connection. Bump VERSION when the file list changes.
 
-const VERSION = 'zeitstrahl-v10';
+const VERSION = 'zeitstrahl-v11';
 const SHELL = [
   './',
   'index.html',

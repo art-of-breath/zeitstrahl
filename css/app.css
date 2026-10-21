@@ -125,6 +125,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 /* The birthday is the one question on this screen: give it the middle. */
 .birth-field { justify-items: center; text-align: center; }
 .birth-field .typed-date { justify-content: center; }
+.birth-field .typed-date .input { letter-spacing: var(--tracking-wide); }
 .field-hint { margin: var(--space-2) 0 0; font-size: 13px; color: var(--text-muted); }
 
 .check { display: flex; align-items: center; gap: var(--space-3); font-size: 15px; cursor: pointer; }
@@ -162,7 +163,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   background: var(--surface-page);
   transition: opacity var(--dur-slow) var(--ease-out);
 }
-.intro.is-leaving { opacity: 0; }
+.intro.is-leaving { opacity: 0; background: transparent; }
 .intro-inner { width: 100%; max-width: 27rem; }
 
 .intro-seam {
@@ -281,24 +282,14 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   .add-label { display: none; }
 }
 
-/* The birth year on its way from its box to its place under "Geburt". Styled exactly like
-   that label (.tick-year), so when it lands the two are the same text. */
-.birth-fly {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 10;
-  font-family: var(--font-sans);
-  font-size: 11px;
-  line-height: 1.1;
-  letter-spacing: var(--tracking-wide);
-  color: var(--text-primary);
-  white-space: nowrap;
-  pointer-events: none;
-  will-change: transform;
-}
-.birth-fly.is-landing { color: var(--text-faint); transition: color var(--dur-draw) var(--ease-in-out); }
-.tick-year.is-carried { visibility: hidden; }
+/* The first arrival: the birth year's tick is there from the start (it takes over from the
+   typed year), "Geburt" and the mark fade in, the year eases to the label colour. */
+.pre .tick.is-anchor { opacity: 1; }
+.pre .is-anchor .tick-age-n, .pre .is-anchor .tick-mark { opacity: 0; }
+.pre .is-anchor .tick-year { color: var(--text-primary); }
+.drawing .is-anchor .tick-age-n, .drawing .is-anchor .tick-mark { transition: opacity 700ms var(--ease-out) 500ms; }
+.drawing .is-anchor .tick-year { transition: color var(--dur-draw) var(--ease-in-out); }
+.drawing .birth-dot { transition: opacity 400ms var(--ease-out); }
 .track.is-arriving { overflow: hidden; }
 
 /* --- The line ---------------------------------------------------------------------- */

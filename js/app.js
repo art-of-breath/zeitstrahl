@@ -141,63 +141,30 @@ introForm.addEventListener('submit', async e => {
   await arrive(birthDate);
 });
 
-// One motion: the year leaves its box and becomes the year under "Geburt" on the line,
-// while the view pulls back from close around that spot and the line draws itself to
-// today. The day and month fade away with the rest of the screen.
+// One motion: the timeline starts zoomed in and placed so that the year under "Geburt"
+// sits exactly where the typed year is. The rest of the screen fades, the line grows out
+// of the year, and the whole view settles into place, carrying the year to its spot.
 async function arrive(birthDate) {
   const yearBox = $('.birth-date .typed-date input:last-of-type');
   const box = yearBox.getBoundingClientRect();
   const boxFont = parseFloat(getComputedStyle(yearBox).fontSize);
 
-  const fly = document.createElement('div');
-  fly.className = 'birth-fly';
-  fly.setAttribute('aria-hidden', 'true');
-  fly.textContent = birthDate.slice(0, 4);
-  document.body.append(fly);
-  const natural = fly.getBoundingClientRect(); // styled exactly like the label, unscaled
-  const s0 = boxFont / parseFloat(getComputedStyle(fly).fontSize);
-  const x0 = box.left + box.width / 2, y0 = box.top + box.height / 2;
-  const place = (x, y, s) => { fly.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${s})`; };
-  place(x0, y0, s0);
-  yearBox.style.color = 'transparent';
-
-  // The line appears underneath while the birthday screen fades off it.
   app.hidden = false;
   refresh();
+  const label = timeline.birthYearLabel();
+  const drawn = timeline.animateIn(false, {
+    from: { el: label, x: box.left + box.width / 2, y: box.top + box.height / 2, scale: boxFont / parseFloat(getComputedStyle(label).fontSize) },
+  });
+
+  // The label now lies exactly under the typed year: hand over, then let the screen go.
+  yearBox.style.color = 'transparent';
   intro.classList.add('is-leaving');
   setTimeout(() => {
     intro.hidden = true;
     intro.classList.remove('is-leaving');
     yearBox.style.color = '';
   }, 420);
-
-  const label = timeline.birthYearLabel();
-  label.classList.add('is-carried');
-  const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const lerp = (a, b, t) => a + (b - a) * t;
-
-  await new Promise(done => {
-    timeline.animateIn(false, {
-      zoomFrom: 4,
-      pivot: label, // the year's place holds still while the life opens out around it
-      onStart(duration) {
-        fly.classList.add('is-landing'); // colour eases to the label's
-        const t0 = performance.now();
-        const follow = now => {
-          const p = Math.min(1, (now - t0) / duration);
-          const e = ease(p);
-          // The label shrinks with the zoom around it; the year glides in and matches it.
-          const r = label.getBoundingClientRect();
-          place(lerp(x0, r.left + r.width / 2, e), lerp(y0, r.top + r.height / 2, e), lerp(s0, r.height / natural.height, e));
-          if (p < 1) return requestAnimationFrame(follow);
-          label.classList.remove('is-carried');
-          fly.remove();
-          done();
-        };
-        requestAnimationFrame(follow);
-      },
-    });
-  });
+  await drawn;
 }
 
 // --- Menu ----------------------------------------------------------------------------
