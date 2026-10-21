@@ -1,0 +1,114 @@
+/* Zeitstrahl brand tokens. Copied from the video platform's brand.css, which derives every value from context/brand-design/. Font URLs are relative so the GitHub Pages subpath works. */
+/* --- Fonts: self-hosted. Athelas and Galvji are proprietary Apple faces and are
+       not web-licensable, so the documented substitutes are used (fonts.md).  --- */
+@font-face { font-family: 'Playfair Display'; src: url('../fonts/playfair-display-v40-latin-regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Playfair Display'; src: url('../fonts/playfair-display-v40-latin-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Playfair Display'; src: url('../fonts/playfair-display-v40-latin-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Playfair Display'; src: url('../fonts/playfair-display-v40-latin-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Playfair Display'; src: url('../fonts/playfair-display-v40-latin-italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Raleway'; src: url('../fonts/raleway-v37-latin-300.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Raleway'; src: url('../fonts/raleway-v37-latin-regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Raleway'; src: url('../fonts/raleway-v37-latin-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Raleway'; src: url('../fonts/raleway-v37-latin-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Raleway'; src: url('../fonts/raleway-v37-latin-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Raleway'; src: url('../fonts/raleway-v37-latin-italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+
+:root {
+  /* Surfaces */
+  --surface-page:    #F6F3F0;
+  --surface-raised:  #FBF9F3;
+  --surface-sunken:  #F0ECE3;
+  --surface-inverse: #3A302E;
+  --surface-veil:    rgba(58, 48, 46, 0.55);
+
+  /* Text roles */
+  --text-primary: #3A302E;
+  --text-muted:   #877F6D;
+  --text-inverse: #E8E2D2;
+  --text-accent:  #B45C43;
+  --text-faint:   #979080;
+
+  /* Lines */
+  --border-hairline: rgba(58, 48, 46, 0.12);
+  --border-soft:     rgba(58, 48, 46, 0.18);
+  --border-strong:   rgba(58, 48, 46, 0.34);
+  --border-on-dark:  rgba(232, 226, 210, 0.18);
+
+  /* Brand / interactive */
+  --brand:        #B45C43;
+  --brand-hover:  #984F3B;
+  --brand-soft:   rgba(180, 92, 67, 0.10);
+  --accent-gold:  #C2923F;
+  --accent-moss:  #A8A178;
+  --wood:         #684735;
+
+  /* Status: earthen, never neon */
+  --status-positive:      #6E7A4F;
+  --status-warning:       #C2923F;
+  --status-danger:        #A23B2C;
+  --status-positive-soft: rgba(110, 122, 79, 0.12);
+  --status-warning-soft:  rgba(194, 146, 63, 0.14);
+  --status-danger-soft:   rgba(162, 59, 44, 0.12);
+
+  --focus-ring: rgba(194, 146, 63, 0.55);
+
+  /* Gold Seam: the smooth low-contrast gradient, the only one allowed on thin rules.
+     The high-contrast Kintsugi Gold gradient is for textures and would band here. */
+  --gold-seam:   linear-gradient(90deg,  #C2923F 0%, #DFBB72 50%, #C2923F 100%);
+  --gold-seam-v: linear-gradient(180deg, #C2923F 0%, #DFBB72 50%, #C2923F 100%);
+  /* The same gradient across a corner, for the round things: on a circle a straight
+     top-to-bottom sweep reads as a horizon line through it, a diagonal reads as light
+     falling on it. */
+  --gold-seam-d: linear-gradient(135deg, #C2923F 0%, #DFBB72 50%, #C2923F 100%);
+
+  /* The same gold again, dissolving at its own end rather than stopping at a line.
+     For the fill of a progress rail, where the last stop has to hand over to the
+     dormant gold underneath instead of cutting against it. The fade is the last
+     quarter of whatever has been filled, so it is a soft edge at any length. */
+  --gold-seam-into: linear-gradient(180deg,
+    #C2923F 0%, #DFBB72 38%, #C2923F 74%,
+    rgba(194, 146, 63, 0.45) 90%, rgba(194, 146, 63, 0) 100%);
+  /* The same gold, held back: what a seam looks like where it has not been earned yet. */
+  --gold-seam-faint: rgba(194, 146, 63, 0.22);
+
+  /* Type */
+  --font-display: 'Playfair Display', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-sans:    'Raleway', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --leading-tight: 1.08;
+  --leading-snug:  1.22;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-wide:   0.04em;
+  --tracking-wider:  0.12em;
+  --tracking-widest: 0.28em;
+
+  /* Spacing, 4px base */
+  --space-1: 0.25rem;  --space-2: 0.5rem;   --space-3: 0.75rem;
+  --space-4: 1rem;     --space-5: 1.5rem;   --space-6: 2rem;
+  --space-7: 2.5rem;   --space-8: 3rem;     --space-9: 4rem;
+  --space-10: 5rem;    --space-11: 6rem;    --space-12: 8rem;
+
+  /* Radii. Buttons are 18px in every variant, never a pill. */
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px; --radius-xl: 26px;
+
+  /* Shadows, all tinted with Charcoal. Never neutral grey or black. */
+  --shadow-xs: 0 1px 2px rgba(58, 48, 46, 0.06);
+  --shadow-sm: 0 2px 6px rgba(58, 48, 46, 0.07);
+  --shadow-md: 0 6px 18px rgba(58, 48, 46, 0.09);
+  --shadow-lg: 0 16px 40px rgba(58, 48, 46, 0.12);
+
+  /* Motion: calm and settled, never bouncy. */
+  --ease-out:    cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.45, 0.05, 0.35, 1);
+  --dur-fast: 140ms; --dur-base: 240ms; --dur-slow: 420ms;
+  /* One step slower again, for the two things in the header that open rather than
+     merely respond: the search field, and the menu's lines folding into a cross. Slow
+     enough to be watched, which is the point, and short of the half second where an
+     interface starts feeling unresponsive instead of calm. */
+  --dur-reveal: 520ms;
+
+  --container-md: 51.25rem;
+  --container-lg: 67.5rem;
+}

@@ -1,0 +1,467 @@
+/* Zeitstrahl. Every value is a token from brand.css. The one bold thing is the line:
+   a Gold Seam that draws itself from birth to today. Everything else stays quiet. */
+
+:root {
+  --ease-breath: cubic-bezier(0.37, 0, 0.63, 1);
+  --dur-breath: 4000ms;
+  --dur-draw: 2400ms;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+/* Tones of a moment: earthen, never signal colors. */
+.tone-light   { --tone: var(--accent-moss); }
+.tone-heavy   { --tone: var(--brand); }
+.tone-mixed   { --tone: var(--accent-gold); }
+.tone-neutral { --tone: var(--text-muted); }
+
+/* --- Base ------------------------------------------------------------------------ */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* --- Buttons: 18px radius in every variant, never a pill ---------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+.btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.btn:disabled { opacity: 0.35; cursor: default; }
+
+.btn-primary { background: var(--brand); color: var(--text-inverse); box-shadow: var(--shadow-sm); }
+.btn-primary:hover:not(:disabled) { background: var(--brand-hover); }
+
+.btn-ghost { background: transparent; border-color: var(--border-soft); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-sunken); }
+.btn-danger { color: var(--status-danger); }
+.btn-small { min-height: 36px; padding: 0 var(--space-4); font-size: 14px; }
+.btn-icon { width: 44px; padding: 0; background: transparent; }
+.btn-icon:hover:not(:disabled) { background: var(--surface-sunken); }
+
+/* --- Form parts ----------------------------------------------------------------------- */
+
+.field { display: grid; gap: var(--space-2); }
+.field-label, .date-field legend, .tone-field legend { font-size: 14px; font-weight: 500; padding: 0; margin-bottom: var(--space-2); }
+.field-label { margin-bottom: 0; }
+.optional { color: var(--text-muted); font-weight: 400; }
+
+.input {
+  width: 100%;
+  min-height: 46px;
+  padding: var(--space-3) var(--space-4);
+  font-size: 16px; /* 16px keeps iOS from zooming in on focus */
+  background: var(--surface-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.input:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 0 3px var(--status-warning-soft); }
+textarea.input { resize: vertical; min-height: 88px; }
+select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%), linear-gradient(135deg, var(--text-muted) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: var(--space-7); }
+
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-1);
+  padding: var(--space-1);
+  margin-bottom: var(--space-3);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+}
+.segmented label { position: relative; }
+.segmented input, .chip input { position: absolute; opacity: 0; pointer-events: none; }
+.segmented span {
+  display: block;
+  padding: var(--space-2) 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+.segmented input:checked + span { background: var(--surface-raised); color: var(--text-primary); box-shadow: var(--shadow-xs); }
+.segmented input:focus-visible + span, .chip input:focus-visible + span { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+
+.date-inputs { display: flex; gap: var(--space-2); }
+.date-inputs select { flex: 1; }
+.date-inputs .input-year { flex: 0 0 7.5rem; }
+.date-inputs .input-year:only-child { flex: 1; }
+.field-hint { margin: var(--space-2) 0 0; font-size: 13px; color: var(--text-muted); }
+
+.check { display: flex; align-items: center; gap: var(--space-3); font-size: 15px; cursor: pointer; }
+.check input { width: 20px; height: 20px; margin: 0; accent-color: var(--brand); }
+.end-block { display: grid; gap: var(--space-4); padding-left: var(--space-4); border-left: 1px solid var(--border-hairline); }
+
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.chip { position: relative; }
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  font-size: 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.chip span::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--tone); }
+.chip input:checked + span { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 14%, var(--surface-raised)); }
+
+.form-error { margin: 0; padding: var(--space-3) var(--space-4); font-size: 14px; color: var(--status-danger); background: var(--status-danger-soft); border-radius: var(--radius-md); }
+
+/* --- First start ---------------------------------------------------------------------- */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5) var(--space-4);
+  overflow-y: auto;
+  background: var(--surface-page);
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.intro.is-leaving { opacity: 0; }
+.intro-inner { width: 100%; max-width: 27rem; }
+
+.intro-seam {
+  width: 100%;
+  aspect-ratio: 1920 / 200;
+  margin-bottom: var(--space-7);
+  background: url('../img/gold-small.png') center / cover;
+  -webkit-mask: url('../img/kintsugi-06.svg') center / contain no-repeat;
+  mask: url('../img/kintsugi-06.svg') center / contain no-repeat;
+}
+
+.intro-title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: var(--leading-tight);
+  letter-spacing: 0.05em;
+}
+.intro-lede { margin: 0 0 var(--space-7); font-size: 17px; line-height: var(--leading-relaxed); }
+.intro-form { display: grid; gap: var(--space-5); }
+.intro-actions { display: flex; gap: var(--space-2); }
+.intro-submit { flex: 1; }
+.intro-privacy { margin: var(--space-6) 0 0; font-size: 13px; color: var(--text-muted); }
+
+@media (min-width: 768px) {
+  .intro-title { font-size: 52px; }
+}
+
+/* --- The app frame ------------------------------------------------------------------- */
+
+.app { display: grid; grid-template-rows: auto 1fr; height: 100vh; height: 100dvh; }
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--space-3) + var(--safe-top)) var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--border-hairline);
+  background: var(--surface-page);
+  position: relative;
+  z-index: 2;
+}
+.brand { display: flex; align-items: center; gap: var(--space-3); color: var(--text-primary); text-decoration: none; }
+.brand-mark { width: 26px; height: 26px; }
+
+/* Which moments are shown. Beides counts as both. */
+.filter { grid-template-columns: repeat(3, auto); margin: 0; }
+.filter span { padding: var(--space-1) var(--space-3); }
+@media (max-width: 419px) {
+  .brand-name { display: none; }
+}
+.brand-name { font-family: var(--font-display); font-size: 20px; letter-spacing: var(--tracking-wide); }
+
+.track {
+  position: relative;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y; /* pinch is ours: it zooms the line, not the page */
+  user-select: none;
+  -webkit-user-select: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-soft) transparent;
+}
+
+.controls {
+  position: fixed;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: calc(var(--space-4) + var(--safe-bottom));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 3;
+}
+.controls > * { pointer-events: auto; }
+.zoom { display: flex; background: var(--surface-raised); border: 1px solid var(--border-hairline); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.add { min-height: 48px; }
+
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: calc(84px + var(--safe-bottom));
+  transform: translateX(-50%);
+  width: min(22rem, calc(100% - 32px));
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+  z-index: 2;
+}
+.hint-mouse { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .hint-touch { display: none; }
+  .hint-mouse { display: inline; }
+}
+
+@media (min-width: 768px) {
+  .controls { left: auto; gap: var(--space-3); }
+}
+
+/* --- The line ---------------------------------------------------------------------- */
+
+.canvas { position: relative; }
+.canvas > * { position: absolute; }
+
+.spine { border-radius: 1px; transform-origin: 0 0; }
+.is-v .spine { background: var(--gold-seam-v); }
+.is-h .spine { background: var(--gold-seam); }
+
+.leaders { left: 0; top: 0; pointer-events: none; overflow: visible; }
+.leaders path { fill: none; stroke: var(--border-soft); stroke-width: 1; }
+
+/* Marks along the line */
+.tick { pointer-events: none; }
+.tick-mark { position: absolute; background: var(--border-soft); }
+.tick-age.is-labelled .tick-mark { background: var(--border-strong); }
+.tick-label { position: absolute; white-space: nowrap; display: flex; flex-direction: column; line-height: 1.1; }
+.tick-age-n { font-family: var(--font-display); font-size: 18px; color: var(--text-primary); }
+.tick-age-n.is-birth { font-style: italic; font-size: 15px; }
+.tick-year { font-size: 11px; color: var(--text-faint); letter-spacing: var(--tracking-wide); margin-top: 2px; }
+.tick-month .tick-label { font-size: 11px; color: var(--text-faint); letter-spacing: var(--tracking-wide); }
+
+.is-v .tick { height: 0; }
+.is-v .tick-mark { right: 0; top: 0; height: 1px; width: 6px; }
+.is-v .tick-age.is-labelled .tick-mark { width: 10px; }
+.is-v .tick-label { right: 18px; top: 0; transform: translateY(-50%); align-items: flex-end; text-align: right; }
+
+.is-h .tick { width: 0; }
+.is-h .tick-mark { left: 0; bottom: 0; width: 1px; height: 6px; }
+.is-h .tick-age.is-labelled .tick-mark { height: 10px; }
+.is-h .tick-label { bottom: 18px; left: 0; transform: translateX(-50%); align-items: center; text-align: center; }
+
+.birth-dot, .ev-dot, .today { transform: translate(-50%, -50%); }
+.birth-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-gold); }
+
+/* Events */
+.ev { padding: 0; border: 0; cursor: pointer; }
+.ev::after { content: ''; position: absolute; inset: -8px; }
+.ev-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--tone); box-shadow: 0 0 0 3px var(--surface-page); }
+.ev-dot.is-fuzzy { box-shadow: 0 0 0 3px var(--surface-page), 0 0 6px 6px color-mix(in srgb, var(--tone) 18%, transparent); }
+.ev-haze { border-radius: 6px; opacity: 0.85; }
+.ev-bar { border-radius: 3px; }
+.ev:hover { filter: brightness(0.94); }
+
+.ev-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--space-2) 0 var(--space-3);
+  text-align: left;
+  /* Frosted, so a leader line from another moment softens where it passes behind. */
+  background: color-mix(in srgb, var(--surface-page) 55%, transparent);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border: 0;
+  border-left: 2px solid var(--tone);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+.ev-label:hover { background: color-mix(in srgb, var(--surface-sunken) 70%, transparent); }
+.ev-title { font-size: 14px; font-weight: 500; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev-when { font-size: 12px; color: var(--text-muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+@media (hover: hover) and (pointer: fine) {
+  .track { cursor: grab; }
+  .track.is-panning { cursor: grabbing; }
+  .track.is-over-line { cursor: crosshair; }
+}
+
+.hover-mark { width: 0; height: 0; pointer-events: none; }
+.hover-mark::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-gold);
+  background: var(--surface-page);
+}
+.hover-label {
+  position: absolute;
+  padding: var(--space-1) var(--space-2);
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-xs);
+}
+.is-v .hover-label { left: 16px; top: 0; transform: translateY(-50%); }
+.is-h .hover-label { left: 0; bottom: 14px; transform: translateX(-50%); }
+
+.ghost { border-radius: 10px; background: var(--status-warning-soft); border: 1px solid var(--focus-ring); pointer-events: none; }
+
+/* Today: the only thing that moves once the line is drawn, at the pace of one breath. */
+.today { width: 0; height: 0; }
+.today-dot { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold-seam-d); }
+.today-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--accent-gold); animation: breathe var(--dur-breath) var(--ease-breath) infinite; }
+.today-label { position: absolute; font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--text-primary); white-space: nowrap; }
+.is-v .today-label { right: 18px; top: 0; transform: translateY(-50%); }
+.is-h .today-label { left: 0; bottom: 18px; transform: translateX(-50%); }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(2.6); opacity: 0; }
+}
+
+/* The first drawing: the line grows from birth to today, and each mark appears as the
+   line reaches it (its --d is set from its position). */
+.pre .spine { transform: scaleY(0); }
+.pre.is-h .spine { transform: scaleX(0); }
+.pre .tick, .pre .ev, .pre .ev-label, .pre .today, .pre .birth-dot, .pre .leaders path { opacity: 0; }
+.drawing .spine { transition: transform var(--dur-draw) var(--ease-breath); }
+.drawing .tick, .drawing .ev, .drawing .ev-label, .drawing .today, .drawing .leaders path {
+  transition: opacity 700ms var(--ease-out) var(--d, 0ms);
+}
+
+/* --- Sheets ----------------------------------------------------------------------------- */
+
+.sheet, .confirm {
+  border: 0;
+  padding: 0;
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-lg);
+}
+.sheet::backdrop, .confirm::backdrop { background: color-mix(in srgb, var(--surface-inverse) 32%, transparent); }
+
+/* Phone: a sheet that rises from the bottom edge. */
+.sheet {
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 92dvh;
+  margin: 0;
+  padding: var(--space-2) var(--space-5) calc(var(--space-5) + var(--safe-bottom));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.sheet[open] { animation: rise var(--dur-slow) var(--ease-out); }
+.sheet-grip { width: 36px; height: 4px; margin: 0 auto var(--space-4); border-radius: 2px; background: var(--border-soft); }
+.sheet-form { display: grid; gap: var(--space-5); }
+.sheet-title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: var(--leading-snug); }
+.sheet-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.spacer { flex: 1; }
+
+@keyframes rise { from { transform: translateY(32px); opacity: 0; } }
+@keyframes settle { from { transform: translateY(8px); opacity: 0; } }
+
+/* Desktop: a quiet panel in the middle. */
+@media (min-width: 768px) and (orientation: landscape) {
+  .sheet {
+    inset: 0;
+    width: min(32rem, calc(100% - 32px));
+    max-height: min(46rem, calc(100dvh - 48px));
+    margin: auto;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+  }
+  .sheet[open] { animation-name: settle; }
+  .sheet-grip { display: none; }
+}
+
+.menu { display: none; }
+.menu[open] { display: grid; gap: var(--space-4); }
+.menu .sheet-title { margin-bottom: 0; }
+.menu-privacy { margin: 0; font-size: 14px; color: var(--text-muted); line-height: var(--leading-relaxed); }
+.menu-list { list-style: none; margin: 0; padding: 0; }
+.menu-list button {
+  width: 100%;
+  padding: var(--space-4) var(--space-1);
+  text-align: left;
+  font-size: 16px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border-hairline);
+  cursor: pointer;
+}
+.menu-list button:hover { color: var(--brand); }
+.menu-list .is-danger { color: var(--status-danger); }
+
+.confirm {
+  width: min(24rem, calc(100% - 32px));
+  margin: auto;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+}
+.confirm[open] { animation: settle var(--dur-slow) var(--ease-out); }
+.confirm-text { margin: 0 0 var(--space-5); font-size: 16px; line-height: var(--leading-relaxed); }
+
+/* --- Calm, or none at all ----------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
