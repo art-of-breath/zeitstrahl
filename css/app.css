@@ -122,6 +122,9 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .typed-date .input { text-align: center; padding-left: var(--space-2); padding-right: var(--space-2); }
 .typed-sep { color: var(--text-faint); }
 .intro-error { margin-top: var(--space-2); }
+/* The birthday is the one question on this screen: give it the middle. */
+.birth-field { justify-items: center; text-align: center; }
+.birth-field .typed-date { justify-content: center; }
 .field-hint { margin: var(--space-2) 0 0; font-size: 13px; color: var(--text-muted); }
 
 .check { display: flex; align-items: center; gap: var(--space-3); font-size: 15px; cursor: pointer; }
@@ -391,6 +394,11 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .pre.is-h .spine { transform: scaleX(0); }
 .pre .tick, .pre .ev, .pre .ev-label, .pre .today, .pre .birth-dot, .pre .leaders path { opacity: 0; }
 .drawing .spine { transition: transform var(--dur-draw) var(--ease-breath); }
+/* Lasting moments grow from where they began, as the line passes. */
+.ev-bar { transform-origin: 0 0; }
+.pre.is-v .ev-bar { transform: scaleY(0); }
+.pre.is-h .ev-bar { transform: scaleX(0); }
+.drawing .ev.ev-bar { transition: opacity 700ms var(--ease-out) var(--d, 0ms), transform 1200ms var(--ease-breath) var(--d, 0ms); }
 .drawing .tick, .drawing .ev, .drawing .ev-label, .drawing .today, .drawing .leaders path {
   transition: opacity 700ms var(--ease-out) var(--d, 0ms);
 }
@@ -477,6 +485,9 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   border-radius: var(--radius-lg);
 }
 .confirm[open] { animation: settle var(--dur-slow) var(--ease-out); }
+.confirm .sheet-actions { flex-wrap: nowrap; }
+.confirm .spacer { display: none; }
+.confirm .sheet-actions .btn { flex: 1; padding: 0 var(--space-3); }
 .confirm-text { margin: 0 0 var(--space-5); font-size: 16px; line-height: var(--leading-relaxed); }
 
 /* --- Calm, or none at all ----------------------------------------------------------- */

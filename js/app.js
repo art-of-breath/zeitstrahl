@@ -207,6 +207,8 @@ async function start() {
   refresh();
   // Fonts change label widths; lay out once more when they are in.
   document.fonts?.ready.then(() => timeline.rerender());
+  // Every visit begins the same way: the line draws itself from birth to today.
+  timeline.animateIn(reduced.matches);
 }
 
 start();

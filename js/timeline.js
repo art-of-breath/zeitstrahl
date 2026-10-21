@@ -24,6 +24,11 @@ export function createTimeline(root, { onPick, onOpen, onChange, verticalQuery }
   let vertical = verticalQuery.matches;
   let g = vertical ? GEOMETRY.v : GEOMETRY.h;
   let ppd = 1;
+  // While the line draws itself, a re-render would swap in finished elements and cut the
+  // drawing short (the first resize after showing the app, fonts arriving). Hold those.
+  let drawing = false;
+  let renderHeld = false;
+  const softRender = () => { if (drawing) renderHeld = true; else render(); };
   let zone = [0, 0]; // the band across the line where a tap or drag picks a moment
   let minPpd = 0.01;
 
@@ -550,7 +555,7 @@ export function createTimeline(root, { onPick, onOpen, onChange, verticalQuery }
     if (verticalQuery.matches !== lastVertical) { lastVertical = verticalQuery.matches; fit(); return; }
     minPpd = fitPpd(viewAlong() - g.padStart - g.padEnd, todayDay - birthDay);
     if (ppd < minPpd) ppd = minPpd;
-    render();
+    softRender();
   }).observe(root);
 
   return {
@@ -562,19 +567,26 @@ export function createTimeline(root, { onPick, onOpen, onChange, verticalQuery }
       events = list;
       if (first) fit(); else render();
     },
-    rerender: render,
+    rerender: softRender,
     zoomBy: f => zoomTo(ppd * f),
     canZoom: () => ({ in: ppd < MAX_PPD - 1e-9, out: ppd > minPpd + 1e-9 }),
     animateIn(reduced) {
       if (reduced) return Promise.resolve();
+      drawing = true;
       canvas.classList.add('pre');
       void canvas.offsetWidth;
       return new Promise(resolve => {
-        requestAnimationFrame(() => {
+        // Two frames: the first paints the empty state, the second starts the drawing.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
           canvas.classList.add('drawing');
           canvas.classList.remove('pre');
-          setTimeout(() => { canvas.classList.remove('drawing'); resolve(); }, DRAW_MS + 900);
-        });
+          setTimeout(() => {
+            canvas.classList.remove('drawing');
+            drawing = false;
+            if (renderHeld) { renderHeld = false; render(); }
+            resolve();
+          }, DRAW_MS + 900);
+        }));
       });
     },
     focusEvent(id) { canvas.querySelector(`.ev[data-id="${CSS.escape(id)}"]`)?.focus(); },
