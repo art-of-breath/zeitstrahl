@@ -86,7 +86,12 @@
     <form class="sheet-form" novalidate>
       <div class="sheet-grab">
         <div class="sheet-grip" aria-hidden="true"></div>
-        <h2 class="sheet-title" id="sheet-title" tabindex="-1" autofocus>Etwas eintragen</h2>
+        <div class="sheet-head">
+          <h2 class="sheet-title" id="sheet-title" tabindex="-1" autofocus>Etwas eintragen</h2>
+          <button class="btn btn-primary btn-icon sheet-done" type="submit" aria-label="Speichern">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>
+          </button>
+        </div>
       </div>
 
       <label class="field">

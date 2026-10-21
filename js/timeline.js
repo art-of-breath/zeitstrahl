@@ -9,7 +9,7 @@ import { packLanes, pushAlong, packRows } from './lanes.js';
 const DRAW_MS = 2400;
 
 const GEOMETRY = {
-  v: { padStart: 56, padEnd: 150, spine: 76, laneStart: 96, laneGap: 12, labelGap: 14, labelSize: 44, minGap: 44 },
+  v: { padStart: 48, padEnd: 40, spine: 76, laneStart: 96, laneGap: 12, labelGap: 14, labelSize: 44, minGap: 44 },
   h: { padStart: 72, padEnd: 140, spine: 120, laneStart: 140, laneGap: 12, labelGap: 20, labelSize: 52, minGap: 56 },
 };
 

@@ -267,6 +267,11 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 @media (min-width: 768px) {
   .controls { left: auto; gap: var(--space-3); }
 }
+/* On a phone, pinch does the zooming; the buttons would only take room. */
+@media (max-width: 767px) {
+  .zoom { display: none; }
+  .controls { justify-content: flex-end; }
+}
 
 /* --- The line ---------------------------------------------------------------------- */
 
@@ -419,6 +424,10 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 /* The handle and the title are where a sheet can be pulled down; the bigger the target the better. */
 .sheet-grab { margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-5)) 0; padding: var(--space-3) var(--space-5) 0; touch-action: none; }
 .sheet-title:focus { outline: none; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.sheet-done { flex: none; width: 40px; min-height: 40px; color: var(--text-inverse); background: var(--brand); }
+.sheet-done:hover:not(:disabled) { background: var(--brand-hover); }
+.sheet-done svg { width: 20px; height: 20px; stroke-width: 2; }
 .sheet-form { display: grid; gap: var(--space-5); }
 .sheet-title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: var(--leading-snug); }
 .sheet-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
@@ -440,6 +449,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   .sheet[open] { animation-name: settle; }
   .sheet-grip { display: none; }
   .sheet-grab { margin: 0; padding: 0; touch-action: auto; }
+  .sheet-done { display: none; }
 }
 
 .menu { display: none; }
